@@ -56,7 +56,7 @@ class AppController extends Controller
             ],
             'loginRedirect' => [
                 'controller'=>'Posts',
-                'action'=>'display'
+                'action'=>'feed'
             ]
         ]);
 

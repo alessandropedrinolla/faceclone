@@ -62,6 +62,8 @@ Router::scope('/', function (RouteBuilder $routes) {
 
     $routes->connect('/', ['controller' => 'Users', 'action' => 'login']);
     $routes->connect('/registration', ['controller' => 'Users', 'action' => 'registration']);
+    $routes->connect('/profile', ['controller' => 'Users', 'action' => 'profile']);
+    $routes->connect('/feed', ['controller' => 'Posts', 'action' => 'feed']);
 
     $routes->fallbacks(DashedRoute::class);
 });
