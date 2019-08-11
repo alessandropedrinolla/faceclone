@@ -26,9 +26,40 @@ class PostsController extends AppController
     public function feed() {
         if($this->request->is('get')){
             $posts = TableRegistry::getTableLocator()->get('Posts');
-            $query = $posts->find('all', ['fields'=>['users.username','posts.content']])->contain(['Users']);
+            $query = $posts->find('all', [
+                'fields'=>['users.user_id','users.username','posts.post_id','posts.created_at','posts.content'],
+                'order'=>['posts.created_at'=>'DESC']
+            ])
+            ->contain(['Users']);
             
-            $this->set('posts',$query);
+            $this->set('user',$this->Auth->user());
+            $this->set('results',$query);
+        }
+    }
+
+    public function delete() {
+        $post_id = $this->request->getParam('post_id');
+        if($this->request->is('get')){
+            $posts = TableRegistry::getTableLocator()->get('Posts');
+            $post = $posts->get($post_id);
+
+            if($post->user_id != $this->Auth->user('user_id'))
+            {
+                $this->Flash->error("You can't delete other users posts");
+                return $this->redirect('/feed');
+            }
+
+            try
+            {
+                $this->Posts->delete($post);
+            }
+            catch(Exception $e){
+                $this->Flash->error("Cannot delete post, " . $e);
+                return $this->redirect('/feed');
+            }
+            
+            $this->Flash->success('Post deleted');
+            return $this->redirect('/feed');
         }
     }
 }

@@ -1,4 +1,6 @@
 <?php
+    $this->set('title','Login');
+    
     echo $this->Form->create('Login',array(
         'id'=>'login-form'
     ));

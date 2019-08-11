@@ -61,9 +61,11 @@ Router::scope('/', function (RouteBuilder $routes) {
     //$routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
 
     $routes->connect('/', ['controller' => 'Users', 'action' => 'login']);
+    $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
     $routes->connect('/registration', ['controller' => 'Users', 'action' => 'registration']);
     $routes->connect('/profile', ['controller' => 'Users', 'action' => 'profile']);
     $routes->connect('/feed', ['controller' => 'Posts', 'action' => 'feed']);
+    $routes->connect('/posts/delete/:post_id', ['controller' => 'Posts', 'action' => 'delete']);
 
     $routes->fallbacks(DashedRoute::class);
 });

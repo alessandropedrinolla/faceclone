@@ -21,6 +21,10 @@ class UsersController extends AppController
         }
     }
 
+    public function logout() {
+        return $this->redirect($this->Auth->logout());
+    }
+
     public function registration() {
         if($this->request->is('post')){            
             $pswdHasher = new DefaultPasswordHasher;
