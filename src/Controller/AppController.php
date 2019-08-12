@@ -16,6 +16,7 @@ namespace App\Controller;
 
 use Cake\Controller\Controller;
 use Cake\Event\Event;
+use Cake\Controller\Component\AuthComponent;
 
 /**
  * Application Controller
@@ -41,29 +42,17 @@ class AppController extends Controller
     {
         parent::initialize();
         $this->loadComponent('Flash');
-        $this->loadComponent('Auth',[
-            'authenticate'=>[
+        
+        $this->loadComponent('Auth', [
+            'authenticate' => [
                 'Form' => [
-                    'fields' =>[
-                        'username'=>'username',
-                        'password'=>'password'
-                    ]
+                    'fields' => ['username' => 'username', 'password' => 'password'],
+                    'passwordHasher'=>'Default'
                 ]
-            ],
-            'loginAction' => [
-                'controller'=>'Users',
-                'action'=>'login'
-            ],
-            'loginRedirect' => [
-                'controller'=>'Posts',
-                'action'=>'feed'
             ]
         ]);
+        $this->Auth->config('authenticate', ['Form']);
 
-        /*
-         * Enable the following component for recommended CakePHP security settings.
-         * see https://book.cakephp.org/3.0/en/controllers/components/security.html
-         */
-        //$this->loadComponent('Security');
+        $this->Auth->allow(['login', 'registration']);
     }
 }

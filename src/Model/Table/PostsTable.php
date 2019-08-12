@@ -13,6 +13,8 @@
             ->setForeignKey('user_id')
             ->setClassName('users')
             ->setJoinType('left');
+
+            $this->hasMany('likes');
         }
     }
 ?>

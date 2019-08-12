@@ -1,12 +1,21 @@
 create table users (
 user_id int AUTO_INCREMENT PRIMARY KEY,
-username varchar(20) UNIQUE,
-password varchar(40) NOT NULL
+username varchar(50) UNIQUE NOT NULL,
+password varchar(100) NOT NULL
 )
 
 create table posts(
 post_id int AUTO_INCREMENT PRIMARY KEY,
 content varchar(255) NOT NULL,
+created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 user_id int NOT NULL,
-FOREIGN KEY (user_id) REFERENCES users(id)
+FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+)
+
+create table likes(
+user_id int,
+post_id int,
+primary key(user_id,post_id),
+FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE
 )

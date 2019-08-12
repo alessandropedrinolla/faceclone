@@ -25,15 +25,17 @@ class PostsController extends AppController
 
     public function feed() {
         if($this->request->is('get')){
-            $posts = TableRegistry::getTableLocator()->get('Posts');
-            $query = $posts->find('all', [
-                'fields'=>['users.user_id','users.username','posts.post_id','posts.created_at','posts.content'],
-                'order'=>['posts.created_at'=>'DESC']
-            ])
-            ->contain(['Users']);
-            
+            $db = ConnectionManager::get('default');
+            $result = $db->execute("
+            SELECT users.user_id, users.username, posts.post_id, posts.content, posts.created_at, count(likes.user_id) as likes, SUM(case when likes.user_id =" . $this->Auth->user('user_id') . " then 1 else 0 end) as post_liked 
+            FROM posts 
+            INNER JOIN users on posts.user_id = users.user_id 
+            LEFT JOIN likes on posts.post_id = likes.post_id
+            GROUP BY posts.post_id
+            ORDER BY posts.post_id DESC");
+
             $this->set('user',$this->Auth->user());
-            $this->set('results',$query);
+            $this->set('results',$result);
         }
     }
 
@@ -59,6 +61,38 @@ class PostsController extends AppController
             }
             
             $this->Flash->success('Post deleted');
+            return $this->redirect('/feed');
+        }
+    }
+
+    public function like() {
+        $post_id = $this->request->getParam('post_id');
+        if($this->request->is('get')){
+            $likes = TableRegistry::getTableLocator()->get('Likes');
+            $like = $likes->newEntity();
+            $like->user_id = $this->Auth->user('user_id');
+            $like->post_id = $post_id;
+
+            $likes->save($like);
+
+            return $this->redirect('/feed');
+        }
+    }
+
+    public function dislike() {
+        if($this->request->is('get')){
+            $post_id = $this->request->getParam('post_id');
+
+            $likes = TableRegistry::get('Likes');
+
+            $like = $likes->get([$this->Auth->user('user_id'),$post_id]);
+
+            try
+            {
+                $likes->delete($like);
+            }
+            catch(Exception $e){}
+
             return $this->redirect('/feed');
         }
     }
